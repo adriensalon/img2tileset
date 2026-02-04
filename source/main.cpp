@@ -45,11 +45,11 @@ int main(int argc, char** argv)
 {
     cli_args args;
     if (!parse_args(argc, argv, args)) {
-        std::cerr << "Usage:\n"
-                     "  img2tileset <input> --ppm <value> [--width <meters>] [--height <meters>]\n\n"
-                     "Examples:\n"
-                     "  img2tileset in.png --width 2.0 --ppm 128\n"
-                     "  img2tileset in.png --height 1.5 --ppm 256\n";
+        std::cerr << "Usage:" << std::endl
+                  << "  img2tileset <input> --ppm <value> [--width <meters>] [--height <meters>]\n" << std::endl
+                  << "Examples:" << std::endl
+                  << "  img2tileset myimage.png --width 2.0 --ppm 128" << std::endl
+                  << "  img2tileset myimage.png --height 1.5 --ppm 256" << std::endl;
         return 1;
     }
 
@@ -57,7 +57,7 @@ int main(int argc, char** argv)
     int _input_width, _input_height, _input_channels;
     unsigned char* _input_pixels = stbi_load(args.input, &_input_width, &_input_height, &_input_channels, 0);
     if (!_input_pixels) {
-        std::cerr << "Failed to load image\n";
+        std::cerr << "Failed to load image" << std::endl;
         return 1;
     }
     stbir_pixel_layout _pixel_layout;
@@ -75,7 +75,7 @@ int main(int argc, char** argv)
         _pixel_layout = STBIR_RGBA;
         break;
     default:
-        std::cerr << "Unsupported channel count\n";
+        std::cerr << "Unsupported channel count" << std::endl;
         stbi_image_free(_input_pixels);
         return 1;
     }
@@ -94,7 +94,7 @@ int main(int argc, char** argv)
         _output_width = static_cast<int>(std::round(_output_height * (float)_input_width / (float)_input_height));
     }
     if (_output_width <= 0 || _output_height <= 0) {
-        std::cerr << "Invalid output size\n";
+        std::cerr << "Invalid output size" << std::endl;
         stbi_image_free(_input_pixels);
         return 1;
     }
@@ -104,8 +104,7 @@ int main(int argc, char** argv)
         _pixel_layout,
         STBIR_TYPE_UINT8,
         STBIR_EDGE_CLAMP,
-        STBIR_FILTER_BOX
-    );
+        STBIR_FILTER_BOX);
 
     // write pixels
     const std::filesystem::path _input_path(args.input);
@@ -116,7 +115,7 @@ int main(int argc, char** argv)
     std::cout << _output_path << std::endl;
     if (!stbi_write_png(_output_path.string().c_str(), _output_width, _output_height, _input_channels,
             _output_pixels.data(), _output_width * _input_channels)) {
-        std::cerr << "Failed to save image\n";
+        std::cerr << "Failed to save image" << std::endl;
         stbi_image_free(_input_pixels);
         return 1;
     }
