@@ -46,10 +46,10 @@ int main(int argc, char** argv)
     cli_args args;
     if (!parse_args(argc, argv, args)) {
         std::cerr << "Usage:" << std::endl
-                  << "  img2tileset <input> --ppm <value> [--width <meters>] [--height <meters>]\n" << std::endl
+                  << "  image_ppm <input> --ppm <value> [--width <meters>] [--height <meters>]\n" << std::endl
                   << "Examples:" << std::endl
-                  << "  img2tileset myimage.png --width 2.0 --ppm 128" << std::endl
-                  << "  img2tileset myimage.png --height 1.5 --ppm 256" << std::endl;
+                  << "  image_ppm myimage.png --width 2.0 --ppm 128" << std::endl
+                  << "  image_ppm myimage.png --height 1.5 --ppm 256" << std::endl;
         return 1;
     }
 
@@ -82,7 +82,6 @@ int main(int argc, char** argv)
 
     // resize pixels
     int _output_width = 0, _output_height = 0;
-    std::vector<unsigned char> _output_pixels(_output_width * _output_height * _input_channels);
     if (args.width_meters > 0 && args.height_meters > 0) {
         _output_width = static_cast<int>(std::round(args.width_meters * args.ppm));
         _output_height = static_cast<int>(std::round(args.height_meters * args.ppm));
@@ -98,21 +97,22 @@ int main(int argc, char** argv)
         stbi_image_free(_input_pixels);
         return 1;
     }
+    std::vector<unsigned char> _output_pixels(_output_width * _output_height * _input_channels);
     stbir_resize(
         _input_pixels, _input_width, _input_height, 0,
         _output_pixels.data(), _output_width, _output_height, 0,
         _pixel_layout,
         STBIR_TYPE_UINT8,
         STBIR_EDGE_CLAMP,
-        STBIR_FILTER_BOX);
+        STBIR_FILTER_POINT_SAMPLE);
 
     // write pixels
-    const std::filesystem::path _input_path(args.input);
+    const std::filesystem::path _input_path = std::filesystem::absolute(args.input);
     const std::filesystem::path _input_filename = _input_path.filename().replace_extension("");
     const std::filesystem::path _input_extension = _input_path.extension();
     const std::string _output_filename = _input_filename.string() + " [" + std::to_string(args.ppm) + "]" + _input_extension.string();
     const std::filesystem::path _output_path(_input_path.parent_path() / _output_filename);
-    std::cout << _output_path << std::endl;
+    
     if (!stbi_write_png(_output_path.string().c_str(), _output_width, _output_height, _input_channels,
             _output_pixels.data(), _output_width * _input_channels)) {
         std::cerr << "Failed to save image" << std::endl;

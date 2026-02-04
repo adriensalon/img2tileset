@@ -1,4 +1,4 @@
-# img2tileset
+# image_ppm
 
 Simple image resize tool for consistent pixels per meter. I use it to convert photographic textures tilesets for Crocotile3D while keeping visual consistency. 
 
@@ -9,11 +9,11 @@ Simple image resize tool for consistent pixels per meter. I use it to convert ph
 # Usage
 
 ```bash
-img2tileset <input> --ppm <value> [--width <meters>] [--height <meters>]
+image_ppm <input> --ppm <value> [--width <meters>] [--height <meters>]
 
 # examples
-img2tileset in.png --width 2.0 --ppm 128
-img2tileset in.png --height 1.5 --ppm 256
+image_ppm in.png --width 2.0 --ppm 128
+image_ppm in.png --height 1.5 --ppm 256
 ```
 
 Image input from `stb_image` supports formats `png`, `jpg/jpeg`, `bmp`, `tga`, `psd`, `gif` (first frame), `pic` and `pnm`. R, RG, RGB and RGBA are the supported LDR pixel layouts. HDR is not supported as its not necessary for albedo painting. Any color space can be used. Output image will be using the same format and pixel layout as the provided input.
